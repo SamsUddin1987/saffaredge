@@ -1,0 +1,183 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SafarEdge{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Luckysheet CSS Dependencies -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet/dist/plugins/css/pluginsCss.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet/dist/plugins/plugins.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet/dist/css/luckysheet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet/dist/assets/iconfont/iconfont.css" />
+
+    {% block extra_css %}{% endblock %}
+
+    <!-- External JS Libraries (CDNs) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luckysheet/dist/plugins/js/plugin.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luckysheet/dist/luckysheet.umd.js"></script>
+
+    <!-- Custom JS Files -->
+    <script src="{% static 'js/cad-viewer.js' %}"></script>
+    <script src="{% static 'js/sheet-viewer.js' %}"></script>
+    <script src="{% static 'js/app.js' %}"></script>
+    
+    <script>
+        function hideAllSubmenus() {
+            document.querySelectorAll('.submenu-right').forEach(menu => {
+                menu.style.display = 'none';
+            });
+        }
+
+        function clearActiveHighlights() {
+            document.querySelectorAll('.menu a').forEach(a => {
+                a.classList.remove('active');
+            });
+        }
+
+        function toggleMenu(event, submenuId, menuEl) {
+            event.stopPropagation();
+            const submenu = document.getElementById(submenuId);
+            const isAlreadyOpen = submenu.style.display === 'block';
+
+            hideAllSubmenus();
+            clearActiveHighlights();
+
+            if (!isAlreadyOpen) {
+                submenu.style.display = 'block';
+                menuEl.classList.add('active');
+            }
+        }
+
+        window.onclick = function (event) {
+            if (!event.target.closest('.menu-item')) {
+                hideAllSubmenus();
+            }
+        };
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentPath = window.location.pathname;
+            const homePath = "{% url 'home' %}";
+
+            if (currentPath === "/" || currentPath === homePath) {
+                document.getElementById("homeMenu")?.classList.add("active");
+                document.body.classList.add("home-active");
+            } else {
+                document.body.classList.remove('home-active');
+                
+                document.querySelectorAll('.menu a[href]').forEach(link => {
+                    const linkPath = new URL(link.href, window.location.origin).pathname;
+                    if (currentPath === linkPath && link.getAttribute('href') !== "javascript:void(0)") {
+                        link.classList.add('active');
+                        const parent = link.closest('.menu-item');
+                        if (parent) {
+                            parent.querySelector('a').classList.add('active');
+                        }
+                    }
+                });
+            }
+        });
+
+        const toolWindows = {};
+
+        function openTool(event, toolName) {
+            event.preventDefault();
+            const url = event.currentTarget.href;
+
+            if (toolWindows[toolName] && !toolWindows[toolName].closed) {
+                toolWindows[toolName].focus();
+            } else {
+                toolWindows[toolName] = window.open(url, toolName);
+            }
+
+            hideAllSubmenus();
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+
+    <div class="layout">
+
+        <div class="menu">
+            <a id="homeMenu" href="{% url 'home' %}">Home</a>
+
+            <!-- Estimation Submenus -->
+            <div class="menu-item">
+                <a id="estimationMenu" href="javascript:void(0)" onclick="toggleMenu(event,'estimationSubmenu',this)">Estimation</a>
+                <div class="submenu-right" id="estimationSubmenu">
+                    <a href="{% url 'estimation_workspace' 'footing' %}" onclick="openTool(event,'estimation_footing')">Footing</a>
+                    <a href="{% url 'estimation_workspace' 'beam' %}" onclick="openTool(event,'estimation_beam')">Beam</a>
+                    <a href="{% url 'estimation_workspace' 'column' %}" onclick="openTool(event,'estimation_column')">Column</a>
+                    <a href="{% url 'estimation_workspace' 'slab' %}" onclick="openTool(event,'estimation_slab')">Slab</a>
+                    <a href="{% url 'estimation_workspace' 'retaining_wall' %}" onclick="openTool(event,'estimation_retaining_wall')">Retaining Wall</a>
+                    <a href="{% url 'estimation_workspace' 'sample' %}" onclick="openTool(event,'estimation_sample')">Sample</a>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <a id="qaqcMenu" href="javascript:void(0)" onclick="toggleMenu(event,'qaqcSubmenu',this)">QA/QC</a>
+                <div class="submenu-right" id="qaqcSubmenu">
+                    <a href="{% url 'qaqc_moisture' %}" onclick="openTool(event,'qaqc_moisture')">Moisture</a>
+                    <a href="{% url 'qaqc_sieve' %}" onclick="openTool(event,'qaqc_sieve')">Sieve Analysis</a>
+                    <a href="{% url 'qaqc_cube' %}" onclick="openTool(event,'qaqc_cube')">CC Cube</a>
+                    <a href="{% url 'qaqc_silt' %}" onclick="openTool(event,'qaqc_silt')">Silt Content</a>
+                    <a href="{% url 'qaqc_bulkage' %}" onclick="openTool(event,'qaqc_bulkage')">Sand Bulkage</a>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <a id="surveyMenu" href="javascript:void(0)" onclick="toggleMenu(event,'surveySubmenu',this)">Survey</a>
+                <div class="submenu-right" id="surveySubmenu">
+                    <a href="{% url 'sur_sympson' %}" onclick="openTool(event,'sur_sympson')">Simpson Rule</a>
+                    <a href="{% url 'sur_area' %}" onclick="openTool(event,'sur_area')">Area Calculation</a>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <a id="aptMenu" href="javascript:void(0)" onclick="toggleMenu(event,'aptSubmenu',this)">Civil Aptitude</a>
+                <div class="submenu-right" id="aptSubmenu">
+                    <a href="{% url 'apt_weight' %}" onclick="openTool(event,'apt_weight')">Unit Weight</a>
+                    <a href="{% url 'apt_area' %}" onclick="openTool(event,'apt_area')">Area Formula</a>
+                    <a href="{% url 'apt_volume' %}" onclick="openTool(event,'apt_volume')">Volume Formula</a>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <a id="pdfMenu" href="javascript:void(0)" onclick="toggleMenu(event,'pdfSubmenu',this)">PDF Editor</a>
+                <div class="submenu-right" id="pdfSubmenu">
+                    <a href="{% url 'pdf_merge' %}" onclick="openTool(event,'pdf_merge')">Merge</a>
+                    <a href="{% url 'pdf_split' %}" onclick="openTool(event,'pdf_split')">Split</a>
+                    <a href="{% url 'pdf_rotate' %}" onclick="openTool(event,'pdf_rotate')">Rotate</a>
+                    <a href="{% url 'pdf_crop' %}" onclick="openTool(event,'pdf_crop')">Crop</a>
+                    <a href="{% url 'pdf_unlock' %}" onclick="openTool(event,'pdf_unlock')">Unlock</a>
+                    <a href="{% url 'pdf_lock' %}" onclick="openTool(event,'pdf_lock')">Lock</a>
+                    <a href="{% url 'pdf_shade' %}" onclick="openTool(event,'pdf_shade')">Remove Shade</a>
+                </div>
+            </div>
+
+            <!-- Single CAD & Sheet menu item (Lower position) -->
+            <a id="cadMenu" href="{% url 'cad_workspace' %}" onclick="openTool(event,'cad_workspace')">CAD & Sheet</a>
+
+            <a id="aboutMenu" href="{% url 'about' %}">About</a>
+            <a id="aimenu" href="{% url 'assistant' %}" target="_blank">AI Assistant</a>
+        </div>
+
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+
+    </div>
+
+    {% block bottom_tabs %}{% endblock %}
+
+</body>
+</html>

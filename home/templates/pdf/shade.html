@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+<link rel="stylesheet" href="{% static 'css/pdf.css' %}">
+
+<div class="merge-container">
+    <h1>Remove Document Shading</h1>
+
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+
+    <p>Upload your document and specify the shade range to clean.</p>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <button type="button" id="captureBtn" class="btn btn-select" style="width: 100%;">
+                Capture Shade
+            </button>
+            <small style="display:block;margin-top:6px;">
+                Choose Window → drag to select shade → Save
+            </small>
+        </div>
+
+        <input type="hidden" name="sample_image_base64" id="sample_image_base64">
+
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+        <div class="form-group">
+            <label><strong>Shade Range (Grayscale)</strong></label>
+            <div style="display:flex; gap:10px; align-items:center; margin-top: 10px;">
+                <div style="flex: 1;">
+                    <small>Min (0–255)</small><br>
+                    <input type="number" name="shade_min" id="shade_min" 
+                           value="160" min="0" max="255" class="btn-select" 
+                           style="background: white; color: black; text-align: left; width: 100%;">
+                </div>
+
+                <div style="flex: 1;">
+                    <small>Max (0–255)</small><br>
+                    <input type="number" name="shade_max" id="shade_max" 
+                           value="240" min="0" max="255" class="btn-select" 
+                           style="background: white; color: black; text-align: left; width: 100%;">
+                </div>
+            </div>
+            <small style="color:#555; display:block; margin-top:8px;">
+                Removes all background shades falling within this grayscale range.
+            </small>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+        <div class="form-group">
+            <label><strong>Select file to clean</strong></label>
+            <input type="file" name="target_file" class="btn-select"
+                   accept=".pdf,.jpg,.jpeg,.png" required>
+        </div>
+
+        <div class="button-group" style="margin-top: 20px;">
+            <button type="submit" class="btn btn-merge">Process & Download</button>
+            <a href="." class="btn btn-select">Reset</a>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+<script>
+let cropper;
+let overlay;
+
+document.getElementById("captureBtn").onclick = async () => {
+    try {
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+            video: { cursor: "always", frameRate: 1 },
+            audio: false
+        });
+
+        const video = document.createElement("video");
+        video.srcObject = stream;
+        await video.play();
+
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext("2d").drawImage(video, 0, 0);
+
+        stream.getTracks().forEach(track => track.stop());
+
+        overlay = document.createElement("div");
+        overlay.style.position = "fixed";
+        overlay.style.inset = 0;
+        overlay.style.background = "rgba(0,0,0,0.85)";
+        overlay.style.display = "flex";
+        overlay.style.alignItems = "center";
+        overlay.style.justifyContent = "center";
+        overlay.style.zIndex = 9999;
+
+        const img = document.createElement("img");
+        img.src = canvas.toDataURL("image/png");
+        img.style.maxWidth = "95vw";
+        img.style.maxHeight = "95vh";
+        img.style.background = "#fff";
+
+        overlay.appendChild(img);
+        document.body.appendChild(overlay);
+
+        img.onload = () => {
+            cropper = new Cropper(img, {
+                viewMode: 1,
+                dragMode: "crop",
+                autoCropArea: 0.2,
+                movable: false,
+                zoomable: false,
+
+                cropend() {
+                    setTimeout(() => {
+                        if (confirm("Save this shade sample?")) {
+                            const cropped = cropper.getCroppedCanvas();
+                            const base64Data = cropped.toDataURL("image/png").split(",")[1];
+
+                            document.getElementById("sample_image_base64").value = base64Data;
+
+                            fetch("/pdf/save-shade/", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/x-www-form-urlencoded"
+                                },
+                                body: "sample_image_base64=" + encodeURIComponent(base64Data)
+                            })
+                            .then(r => r.json())
+                            .then(d => {
+                                if (d.status === "ok") {
+                                    alert("Shade saved ✔");
+                                }
+                            });
+                        }
+                        cropper.destroy();
+                        document.body.removeChild(overlay);
+                    }, 50);
+                }
+            });
+        };
+    } catch (err) {
+        console.error("Capture failed:", err);
+    }
+};
+</script>
+
+{% endblock %}

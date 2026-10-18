@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/pdf.css' %}">
+
+<div class="merge-container">
+    <h1>Merge PDF</h1>
+    
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <p>Upload your documents to combine and download them instantly.</p>
+
+    <form action="{% url 'pdf_merge' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %} 
+        <div class="form-group">
+            <input type="file" name="pdfs" id="pdfs" class="btn-select" accept=".pdf" multiple required>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-merge">Merge & Download</button>
+            
+            <a href="{% url 'pdf_merge' %}" class="btn btn-select">Reset</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

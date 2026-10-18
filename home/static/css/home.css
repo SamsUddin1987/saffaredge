@@ -1,0 +1,14 @@
+body.home-active .content {
+    background-image:
+        radial-gradient(circle at bottom right, #c8f1e1, #77e285, #e49750),
+        url("/static/images/home-bg.webp");
+    background-repeat: no-repeat;
+    background-position: right bottom;
+    background-size: 60%;
+}
+
+.content-inner {
+    max-width: 900px;
+    margin: auto;
+    text-align: center;
+}

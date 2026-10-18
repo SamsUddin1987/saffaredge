@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/pdf.css' %}">
+
+<div class="merge-container">
+    <h1>Unlock PDF</h1>
+    
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <p>Upload a password-protected PDF and enter the password to remove encryption.</p>
+
+    <form action="{% url 'pdf_unlock' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <input type="file" name="pdfs" id="pdfs" class="btn-select" accept=".pdf" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Enter PDF Password:</label>
+            <input type="password" name="password" id="password" placeholder="Password" required>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-merge">Remove Password & Download</button>
+            <a href="{% url 'pdf_unlock' %}" class="btn btn-select">Reset</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

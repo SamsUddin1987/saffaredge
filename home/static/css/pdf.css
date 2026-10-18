@@ -1,0 +1,62 @@
+.merge-container {
+    max-width: 1000px;
+    margin: 3rem auto;
+    padding: 0.5rem;
+    text-align: center;
+    border: 1px solid #90db8a;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    background-color: #9bd3e0;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.button-group {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 12px 24px;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-select {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-merge {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-download {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.btn-disabled {
+    background-color: #d6d6d6;
+    color: #888;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+input[type="file"] {
+    display: block;
+    margin: 10px auto;
+}

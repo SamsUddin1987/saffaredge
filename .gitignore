@@ -1,0 +1,18 @@
+# Python environment
+.venv/
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django sensitive data and local database
+.env
+db.sqlite3
+staticfiles/
+
+# Vercel and IDE files
+.vercel/
+.vscode/
+.idea/

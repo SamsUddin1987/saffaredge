@@ -1,0 +1,188 @@
+/* ===== GLOBAL ===== */
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: #f4f6f8;
+}
+
+/* ===== UPDATED CONTENT AREA (Gradient for all pages) ===== */
+.content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    overflow-y: auto;
+    
+    /* Apply the gradient to all pages by default */
+    background: radial-gradient(
+        circle at bottom right,
+        #61b98dcc,
+        #dfd9a1cc
+    );
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+/* ===== GRID PAGES (Excel-style) ===== */
+.grid-page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;      /* 🔑 grid handles scrolling */
+    background: none;      /* no background */
+}
+
+.grid-wrapper {
+    flex: 1;
+    overflow: auto;        /* ONLY scrolling area */
+    background: #ffffff;  /* clean white sheet */
+}
+
+/* ===== HOME BACKGROUND – ADD IMAGE ONLY ON HOME ===== */
+body.home-active .content {
+    /* Keep the gradient but add the image on top */
+    background-image:
+        url("/static/images/home-bg.webp"),
+        radial-gradient(
+            circle at bottom right,
+            #b9ae43cc,
+            #d6f1e9,
+            #77e285,
+            #e49750
+        );
+
+    background-repeat: no-repeat, no-repeat;
+    background-position: right bottom, right bottom;
+    
+    /* Image takes 60%, Gradient takes 100% */
+    background-size: 60%, 100% 100%;
+}
+
+/* ===== HOME CONTENT ===== */
+.content-inner {
+    max-width: 900px;
+    width: 100%;
+    padding: 40px;
+    text-align: center;
+}
+
+/* ===== MAIN LAYOUT ===== */
+.layout {
+    display: flex;
+    height: 100vh;
+}
+
+/* ===== LEFT SIDEBAR ===== */
+.menu {
+    width: 240px;
+    background: linear-gradient(180deg, #a77491, #6673ad);
+    padding: 22px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 3px 0 12px rgba(0,0,0,0.35);
+}
+
+/* ===== MENU BUTTONS ===== */
+.menu a {
+    background: linear-gradient(180deg, #98a2b1, #5d7eb3);
+    color: #e5e7eb;
+    text-decoration: none;
+    padding: 12px 18px;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    border-radius: 6px;
+
+    box-shadow:
+        2px 4px 0 #020617,
+        2px 6px 10px rgba(0,0,0,0.4);
+
+    transition:
+        transform 0.12s ease,
+        box-shadow 0.12s ease,
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+/* ===== HOVER ===== */
+.menu a:hover {
+    background: linear-gradient(180deg, #475569, #334155);
+    color: #38bdf8;
+}
+
+/* ===== PRESS ===== */
+.menu a:active {
+    transform: translateY(2px);
+    box-shadow:
+        1px 1px 0 #020617,
+        1px 3px 6px rgba(0,0,0,0.35);
+}
+
+/* ===== ACTIVE MENU ===== */
+.menu a.active {
+    background: linear-gradient(180deg, #38bdf8, #0284c7);
+    color: #020617;
+    box-shadow:
+        2px 4px 0 #075985,
+        2px 6px 12px rgba(0,0,0,0.45);
+}
+
+/* ===== MENU ITEM CONTAINER ===== */
+.menu-item {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* ===== SUBMENU (CLICK BASED) ===== */
+.submenu-right {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    margin-left: 10px;
+    width: 160px;
+    padding: 6px;
+    border-radius: 6px;
+    background: rgba(0,0,0,0.18);
+    z-index: 100;
+    overflow: visible;
+}
+
+/* ===== SUBMENU BUTTONS ===== */
+.submenu-right a {
+    display: block;
+    font-size: 14px;
+    padding: 6px 8px;
+    margin-bottom: 6px;
+    border-radius: 5px;
+    background: linear-gradient(180deg, #8b8864, #475569);
+}
+
+/* ===== SUBMENU HOVER ===== */
+.submenu-right a:hover {
+    background: linear-gradient(180deg, #64748b, #334155);
+    color: #38bdf8;
+}
+
+/* ===== CONTENT AREA ===== */
+.content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    overflow-y: auto;
+    background-color: #f4f6f8;
+}
+
+/* ===== CONTENT SECTIONS ===== */
+.content-section {
+    display: none;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.content-section.active-section {
+    display: block;
+}

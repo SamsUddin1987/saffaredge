@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/pdf.css' %}">
+
+<div class="merge-container">
+    <h1>Rotate PDF</h1>
+    
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <p>Upload a PDF to rotate all its pages clockwise.</p>
+
+    <form action="{% url 'pdf_rotate' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <input type="file" name="pdf_file" id="pdf_file" class="btn-select" accept=".pdf" required>
+        </div>
+
+        <div class="form-group">
+            <label for="angle">Rotation Angle:</label>
+            <select name="angle" id="angle" class="btn-select" style="width: 100%; padding: 10px; margin-top: 10px;">
+                <option value="90">90° Clockwise</option>
+                <option value="180">180° Flip</option>
+                <option value="270">270° Counter-Clockwise</option>
+            </select>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-merge">Rotate & Download</button>
+            <a href="{% url 'pdf_rotate' %}" class="btn btn-select">Reset</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

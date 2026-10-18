@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/pdf.css' %}">
+
+<div class="merge-container">
+    <h1>Split PDF</h1>
+    
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <p>Upload a document and specify the page range to extract.</p>
+
+    <form action="{% url 'pdf_split' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <input type="file" name="pdfs" id="pdfs" class="btn-select" accept=".pdf" required>
+        </div>
+
+        <div class="form-group">
+            <label for="start_page">Starting Page (1-based):</label>
+            <input type="number" name="start_page" id="start_page" min="1" value="1" required>
+        </div>
+
+        <div class="form-group">
+            <label for="end_page">Ending Page:</label>
+            <input type="number" name="end_page" id="end_page" min="1" required>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-merge">Split & Download</button>
+            <a href="{% url 'pdf_split' %}" class="btn btn-select">Reset</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

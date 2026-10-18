@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant • Elite AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root { --bg-main: #08080a; --sidebar-bg: #0c0c0f; --accent: #6366f1; }
+        body { background: var(--bg-main); color: white; font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; }
+        .sidebar { background: var(--sidebar-bg); border-right: 1px solid rgba(255,255,255,0.05); }
+        .btn-primary { background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%); }
+        
+        #splash-screen { position: fixed; inset: 0; background: #08080a; z-index: 999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease; }
+        #main-container { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        #preview-panel { width: 0; transition: width 0.5s ease; border-left: 1px solid rgba(255,255,255,0.1); overflow: hidden; background: #f8fafc; }
+        #preview-panel.active { width: 50%; }
+
+        pre { position: relative; padding-top: 2.5rem !important; border-radius: 12px !important; margin: 1rem 0; }
+        .copy-btn { position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 10px; color: #a1a1aa; transition: 0.2s; z-index: 10; cursor: pointer; }
+        .copy-btn:hover { background: #6366f1; color: white; }
+
+        .file-badge { background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.4); color: #818cf8; padding: 4px 12px; border-radius: 10px; font-size: 11px; display: inline-flex; align-items: center; gap: 6px; }
+        
+        iframe { width: 100%; height: 100%; border: none; }
+        .animate-slide-up { animation: slideUp 0.5s ease-out forwards; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .prose pre { background-color: #18181b !important; border: 1px solid rgba(255,255,255,0.1); }
+        .prose code { color: #818cf8; font-weight: 500; }
+    </style>
+</head>
+<body class="flex h-screen w-full">
+
+    <div id="splash-screen">
+        <div class="w-24 h-24 btn-primary rounded-[32px] flex items-center justify-center mb-6 animate-bounce shadow-2xl">
+            <i class="fa-solid fa-bolt-lightning text-white text-4xl"></i>
+        </div>
+        <div class="text-center">
+            <h1 class="text-white text-3xl font-bold tracking-tighter">AI Assistant</h1>
+            <p class="text-indigo-400 text-xs font-black uppercase tracking-[0.3em] mt-2">By Safwat Rakhwan</p>
+        </div>
+    </div>
+
+    <aside class="sidebar w-72 flex flex-col shrink-0 p-4 hidden md:flex">
+        <div class="flex items-center gap-3 mb-8 px-2">
+            <div class="w-10 h-10 btn-primary rounded-xl flex items-center justify-center shadow-lg">
+                <i class="fa-solid fa-bolt-lightning text-white"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg leading-none">AI Assistant</h1>
+                <p class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">v2.2 Pro File-Aware</p>
+            </div>
+        </div>
+
+        <button onclick="createNewChat()" class="btn-primary w-full py-3 rounded-xl font-bold text-white mb-6 flex items-center justify-center gap-2 text-sm shadow-lg shadow-indigo-500/20">
+            <i class="fa-solid fa-plus"></i> New Session
+        </button>
+
+        <div class="flex-1 overflow-y-auto space-y-2" id="history-list"></div>
+    </aside>
+
+    <div id="main-container" class="flex-1 flex overflow-hidden">
+        <main class="flex-1 flex flex-col relative min-w-0 bg-[#060608]">
+            <div id="chat-box" class="flex-1 overflow-y-auto p-6 space-y-8 pb-44 scroll-smooth"></div>
+
+            <div class="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-[#060608] via-[#060608] to-transparent">
+                <div class="max-w-4xl mx-auto">
+                    <div id="file-staging" class="hidden mb-3 px-4 py-2 flex items-center gap-3"></div>
+
+                    <div class="bg-zinc-900/80 border border-white/10 rounded-[28px] p-2 flex items-center gap-2 shadow-2xl backdrop-blur-xl">
+                        <input type="file" id="file-input" class="hidden" onchange="handleFileSelect(event)">
+                        <button onclick="document.getElementById('file-input').click()" class="w-10 h-10 rounded-full text-zinc-400 hover:text-white transition-colors flex items-center justify-center">
+                            <i class="fa-solid fa-paperclip"></i>
+                        </button>
+                        
+                        <select id="pro-selector" class="bg-indigo-600/20 text-indigo-400 text-[10px] font-bold uppercase px-3 py-2 rounded-2xl outline-none border-none cursor-pointer">
+                            <option value="Scholar" class="bg-zinc-900">🎓 Scholar</option>
+                            <option value="Pro Code" selected class="bg-zinc-900">💻 Pro Code</option>
+                            <option value="Storybook" class="bg-zinc-900">📖 Storybook</option>
+                        </select>
+
+                        <textarea id="user-input" rows="1" placeholder="Type message or upload files..." class="flex-1 bg-transparent outline-none text-sm py-3 px-2 resize-none text-white"></textarea>
+
+                        <button onclick="handleSend()" class="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-500 transition-all active:scale-95 shadow-lg">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div id="preview-panel" class="flex flex-col">
+            <div class="bg-white border-b p-3 flex justify-between items-center">
+                <span class="text-xs font-bold text-zinc-800 uppercase">Live Output</span>
+                <button onclick="closePreview()" class="text-zinc-400 hover:text-zinc-800">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="preview-container" class="flex-1"></div>
+        </div>
+    </div>
+
+<script>
+const API_KEY = "AIzaSyDRtbr3XG5qbv-e1URYFYdPTU3NgEYkCCE"; 
+
+let chats = JSON.parse(localStorage.getItem('safwat_ultra_v2')) || {};
+let currentChatId = null;
+let stagedFileData = { name: null, content: null };
+
+window.onload = () => {
+    setTimeout(() => { 
+        document.getElementById('splash-screen').style.opacity = '0'; 
+        setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 800); 
+    }, 2000);
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const chatId = urlParams.get('chat');
+    if(chatId && chats[chatId]) loadChat(chatId); 
+    else createNewChat();
+    
+    renderSidebar();
+};
+
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        stagedFileData = { name: file.name, content: e.target.result };
+        const stagingArea = document.getElementById('file-staging');
+        stagingArea.innerHTML = `
+            <div class="file-badge">
+                <i class="fa-solid fa-file-code"></i> 
+                ${file.name} 
+                <button onclick="clearStaging()" class="ml-2 hover:text-white">&times;</button>
+            </div>`;
+        stagingArea.classList.remove('hidden');
+    };
+    reader.readAsText(file);
+}
+
+function clearStaging() {
+    stagedFileData = { name: null, content: null };
+    document.getElementById('file-staging').classList.add('hidden');
+    document.getElementById('file-input').value = '';
+}
+
+async function handleSend() {
+    const input = document.getElementById('user-input');
+    let prompt = input.value.trim();
+    const mode = document.getElementById('pro-selector').value;
+    
+    if(!prompt && !stagedFileData.content) return;
+
+    if(document.getElementById('welcome')) 
+        document.getElementById('welcome').remove();
+
+    let displayMessage = prompt;
+
+    if(stagedFileData.name) {
+        displayMessage = `
+            <div class="file-badge mb-2">
+                <i class="fa-solid fa-file-import"></i> 
+                ${stagedFileData.name}
+            </div><br>` + prompt;
+
+        prompt = `[FILE CONTENT: ${stagedFileData.name}]
+${stagedFileData.content}
+
+[USER INSTRUCTION]: ${prompt}`;
+    }
+
+    createBubble('user', displayMessage);
+    input.value = ''; 
+    input.style.height = "auto";
+    clearStaging();
+    showLoading();
+
+    try {
+        let sys = `You are ${mode}, part of AI Assistant by Safwat Rakhwan. Analyze any file content provided and help the user. You will work as a civil assistant, solve problems, and help inside Safar Edge.`;
+
+        if(mode === 'Pro Code')
+            sys += " Output complete code blocks with ```html when possible for previews.";
+
+        const res = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`, 
+            {
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ 
+                    contents: [{ parts: [{ text: sys + prompt }] }] 
+                })
+            }
+        );
+        
+        const data = await res.json();
+        if (data.error) throw new Error(data.error.message);
+
+        const reply = data.candidates[0].content.parts[0].text;
+
+        removeLoading();
+        createBubble('ai', marked.parse(reply));
+        extractAndPreview(reply);
+
+        chats[currentChatId].messages.push(
+            { role: 'user', text: displayMessage },
+            { role: 'ai', text: reply, mode: mode }
+        );
+
+        save(); 
+        renderSidebar();
+
+    } catch(e) { 
+        console.error("API Error:", e);
+        removeLoading(); 
+        createBubble('ai', `
+            <div class="text-red-400">
+                <i class="fa-solid fa-triangle-exclamation mr-2"></i>
+                <strong>Neural core offline.</strong><br>
+                <span class="text-xs opacity-70">${e.message}</span>
+            </div>
+        `); 
+    }
+}
+
+function createBubble(role, text) {
+    const box = document.getElementById('chat-box');
+    const div = document.createElement('div');
+    div.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'} w-full animate-slide-up`;
+
+    const inner = document.createElement('div');
+    inner.className = role === 'user' 
+        ? 'bg-indigo-600 text-white p-4 rounded-2xl max-w-[85%] text-sm shadow-lg' 
+        : 'prose prose-invert max-w-full w-full bg-zinc-900/50 p-6 rounded-3xl border border-white/5';
+
+    inner.innerHTML = text;
+
+    inner.querySelectorAll('pre code').forEach(codeBlock => {
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.innerText = 'Copy Code';
+        btn.onclick = () => { 
+            navigator.clipboard.writeText(codeBlock.innerText); 
+            btn.innerText = 'Copied!'; 
+            setTimeout(() => btn.innerText = 'Copy Code', 2000); 
+        };
+        codeBlock.parentElement.appendChild(btn);
+    });
+
+    div.appendChild(inner); 
+    box.appendChild(div);
+    box.scrollTo({top: box.scrollHeight, behavior: 'smooth'});
+}
+
+function extractAndPreview(text) {
+    const match = text.match(/```html([\s\S]*?)```/);
+    if(match) {
+        document.getElementById('preview-panel').classList.add('active');
+        const container = document.getElementById('preview-container');
+        container.innerHTML = '<iframe></iframe>';
+        const iframe = container.querySelector('iframe');
+        iframe.contentWindow.document.open();
+        iframe.contentWindow.document.write(match[1]);
+        iframe.contentWindow.document.close();
+    }
+}
+
+function closePreview() { 
+    document.getElementById('preview-panel').classList.remove('active'); 
+}
+
+function createNewChat() { 
+    currentChatId = 'c_'+Date.now(); 
+    chats[currentChatId] = {messages:[]}; 
+    updateUrl(currentChatId); 
+    showWelcome(); 
+    renderSidebar(); 
+    closePreview(); 
+}
+
+function loadChat(id) { 
+    currentChatId = id; 
+    updateUrl(id); 
+    document.getElementById('chat-box').innerHTML = ''; 
+
+    if(chats[id].messages.length) {
+        chats[id].messages.forEach(m => { 
+            createBubble(m.role, m.role === 'ai' ? marked.parse(m.text) : m.text); 
+            if(m.role === 'ai') extractAndPreview(m.text); 
+        });
+    } else {
+        showWelcome();
+    }
+
+    renderSidebar(); 
+}
+
+function updateUrl(id) { 
+    history.pushState({}, '', '?chat='+id); 
+}
+
+function renderSidebar() {
+    const list = document.getElementById('history-list'); 
+    list.innerHTML = '';
+
+    Object.keys(chats).reverse().forEach(id => {
+        const btn = document.createElement('button');
+        btn.className = `w-full text-left p-3 rounded-xl text-[11px] font-bold truncate mb-1 transition-all ${
+            id === currentChatId 
+            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' 
+            : 'text-zinc-500 hover:bg-white/5'
+        }`;
+
+        const firstMsg = chats[id].messages[0]?.text || "New Session";
+        btn.innerText = firstMsg.replace(/<[^>]*>/g, '').substring(0, 30);
+        btn.onclick = () => loadChat(id);
+        list.appendChild(btn);
+    });
+}
+
+function showWelcome() { 
+    document.getElementById('chat-box').innerHTML = `
+    <div id="welcome" class="h-full flex flex-col items-center justify-center text-center py-20 animate-slide-up">
+        <div class="w-20 h-20 rounded-3xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-6">
+            <i class="fa-solid fa-bolt-lightning text-4xl text-indigo-500"></i>
+        </div>
+        <h2 class="text-4xl font-bold mb-2">AI Assistant</h2>
+        <p class="text-zinc-500 text-sm">Upload code or text files to begin elite analysis.</p>
+    </div>`;
+}
+
+function save() { 
+    localStorage.setItem('safwat_ultra_v2', JSON.stringify(chats)); 
+}
+
+function showLoading() { 
+    const l = document.createElement('div'); 
+    l.id = 'loading'; 
+    l.className = "p-4 text-indigo-500 font-bold animate-pulse text-xs flex items-center gap-2"; 
+    l.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> AI ASSISTANT ANALYZING...`; 
+    document.getElementById('chat-box').appendChild(l); 
+}
+
+function removeLoading() { 
+    document.getElementById('loading')?.remove(); 
+}
+
+/* Auto-expand textarea */
+const tx = document.getElementById('user-input');
+
+tx.addEventListener("input", function() {
+    this.style.height = "auto";
+    this.style.height = (this.scrollHeight) + "px";
+});
+
+/* ENTER TO SEND */
+tx.addEventListener("keydown", function(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSend();
+    }
+});
+</script>
+
+</body>
+</html>
