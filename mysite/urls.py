@@ -60,7 +60,7 @@ urlpatterns = [
     # =========================
     # Main CAD & Sheet Link
     path("cad-workspace/", views.workspace_view, name="cad_workspace"),
-    
+
     # Estimation Submenus (Footing, Beam, Column, etc.)
     path("estimation/<str:tool_type>/", views.workspace_view, name="estimation_workspace"),
 ]

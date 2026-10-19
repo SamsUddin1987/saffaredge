@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}SafarEdge{% endblock %}</title>
+    <title>{% block title %}SafarEst{% endblock %}</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     
@@ -17,6 +17,449 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet/dist/css/luckysheet.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/luckysheet/dist/assets/iconfont/iconfont.css" />
 
+    <style>
+/* =====================================================
+   SAFAREST DESIGN & THEME SYSTEM
+   ===================================================== */
+
+:root {
+    --menu-width: 260px;
+    --topbar-h: 60px;
+    --content-pad: 32px;
+    
+    /* Dark Theme Variables (Default) */
+    --bg-dark: #0f172a;
+    --bg-sidebar: #1e293b;
+    --bg-card: #334155;
+    --bg-hover: rgba(255, 255, 255, 0.08);
+    --bg-active: #6366f1;
+    --accent-blue: #6366f1;
+    --accent-light: #818cf8;
+    
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --line: rgba(255, 255, 255, 0.1);
+    
+    --submenu-bg: #1e293b;
+    --submenu-border: rgba(255, 255, 255, 0.12);
+    --shadow-color: rgba(0, 0, 0, 0.4);
+
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+}
+
+/* Light Theme Variables */
+body.light-theme {
+    --bg-dark: #f1f5f9;
+    --bg-sidebar: #ffffff;
+    --bg-card: #e2e8f0;
+    --bg-hover: rgba(0, 0, 0, 0.05);
+    --bg-active: #4f46e5;
+    --accent-blue: #4f46e5;
+    --accent-light: #6366f1;
+    
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --line: rgba(0, 0, 0, 0.08);
+    
+    --submenu-bg: #ffffff;
+    --submenu-border: rgba(0, 0, 0, 0.1);
+    --shadow-color: rgba(0, 0, 0, 0.15);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* ---------- Layout ---------- */
+.layout {
+    display: flex;
+    height: 100vh;
+    height: 100dvh;
+}
+
+/* =====================================================
+   SIDEBAR
+   ===================================================== */
+.menu {
+    width: var(--menu-width);
+    flex-shrink: 0;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--line);
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 20;
+    gap: 12px;
+    transition: background 0.25s ease, border-color 0.25s ease;
+    overflow: visible; /* Allows drop-outs without clipping */
+}
+
+/* Sidebar Top Header (Logo + Brand + Collapse Button) */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 4px;
+}
+
+.brand-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #38bdf8, var(--accent-blue));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 18px;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+}
+
+.brand-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.3px;
+}
+
+.collapse-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.18s ease, color 0.18s ease;
+}
+
+.collapse-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+/* Search Box */
+.search-container {
+    position: relative;
+}
+
+.search-container i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 14px 10px 38px;
+    background: var(--bg-card);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.18s ease, background 0.25s ease;
+}
+
+.search-input::placeholder {
+    color: var(--text-secondary);
+}
+
+.search-input:focus {
+    border-color: var(--accent-blue);
+}
+
+/* Navigation Menu Items Container */
+.menu-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    overflow-y: auto; /* Scrollable menu section */
+    overflow-x: hidden;
+    padding-right: 2px;
+}
+
+.menu a {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: transparent;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 10px 12px;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 14.5px;
+    transition: background 0.18s ease, color 0.18s ease;
+}
+
+.menu a:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.menu a.active {
+    background: var(--bg-active);
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+.menu a i.nav-icon {
+    font-size: 16px;
+    width: 22px;
+    text-align: center;
+    color: inherit;
+}
+
+/* Dropdown Arrow */
+.menu-item > a::after {
+    content: "\f054";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 10px;
+    margin-left: auto;
+    color: var(--text-secondary);
+    transition: transform 0.2s ease;
+}
+
+.menu-item.open > a::after,
+.menu-item:hover > a::after {
+    transform: rotate(90deg);
+}
+
+.menu-item {
+    position: relative;
+}
+
+/* Hide menu item during search filtering */
+.menu-item.hidden-search,
+.menu-nav > a.hidden-search {
+    display: none !important;
+}
+
+/* =====================================================
+   FLYOUT SUBMENU (FLOATING OUTSIDE SIDEBAR)
+   ===================================================== */
+.submenu-right {
+    display: none;
+    position: fixed; /* Renders outside sidebar bounds without clipping */
+    min-width: 210px;
+    padding: 8px;
+    background: var(--submenu-bg);
+    border: 1px solid var(--submenu-border);
+    border-radius: 14px;
+    box-shadow: 0 16px 36px var(--shadow-color);
+    z-index: 9999;
+    backdrop-filter: blur(8px);
+}
+
+/* Bridge gap for mouse hover */
+.submenu-right::before {
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 0;
+    width: 15px;
+    height: 100%;
+}
+
+.submenu-right a {
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    display: block;
+}
+
+.submenu-right a:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.submenu-right a.active {
+    background: var(--bg-active);
+    color: #ffffff !important;
+}
+
+/* Sidebar Footer - Dark Mode Toggle Switch */
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+}
+
+.dark-mode-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-card);
+    padding: 10px 14px;
+    border-radius: 12px;
+    transition: background 0.25s ease;
+}
+
+.dark-mode-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: #64748b;
+    transition: .3s;
+    border-radius: 22px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--accent-blue);
+}
+
+input:checked + .slider:before {
+    transform: translateX(18px);
+}
+
+/* ---------- Content Area ---------- */
+.content {
+    flex: 1;
+    min-width: 0;
+    padding: var(--content-pad);
+    overflow-y: auto;
+}
+
+/* Mobile & Tablet Top Bar */
+.topbar, .menu-overlay { display: none; }
+
+@media (max-width: 1024px) {
+    .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        height: var(--topbar-h);
+        padding: 0 16px;
+        background: var(--bg-sidebar);
+        border-bottom: 1px solid var(--line);
+        z-index: 1200;
+    }
+
+    .menu-toggle {
+        background: var(--bg-card);
+        border: none;
+        color: var(--text-primary);
+        width: 38px; height: 38px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .layout { padding-top: var(--topbar-h); }
+
+    .menu {
+        position: fixed;
+        top: 0; left: 0; bottom: 0;
+        transform: translateX(-105%);
+        transition: transform 0.28s ease, visibility 0.28s;
+        z-index: 1100;
+        visibility: hidden;
+        box-shadow: 12px 0 32px var(--shadow-color);
+    }
+
+    body.menu-open .menu {
+        transform: translateX(0);
+        visibility: visible;
+    }
+
+    /* Inline accordions on mobile view */
+    .submenu-right {
+        position: static !important;
+        box-shadow: none;
+        margin: 4px 0 4px 18px;
+        background: transparent;
+        border: none;
+        border-left: 2px solid var(--line);
+        padding: 0 0 0 10px;
+    }
+
+    .menu-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.28s ease;
+        z-index: 1050;
+    }
+
+    body.menu-open .menu-overlay {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+    </style>
+
     {% block extra_css %}{% endblock %}
 
     <!-- External JS Libraries (CDNs) -->
@@ -28,65 +471,311 @@
     <script src="{% static 'js/cad-viewer.js' %}"></script>
     <script src="{% static 'js/sheet-viewer.js' %}"></script>
     <script src="{% static 'js/app.js' %}"></script>
-    
+</head>
+
+<body>
+
+    <!-- Mobile Top Header -->
+    <header class="topbar">
+        <div style="display:flex; align-items:center; gap:12px;">
+            <button type="button" class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">
+                <i class="fa-solid fa-bars" id="menuToggleIcon"></i>
+            </button>
+            <span class="brand-title">SafarEst</span>
+        </div>
+        <div class="brand-badge" style="width:32px; height:32px; font-size:14px;">
+            <i class="fa-solid fa-compass-drafting"></i>
+        </div>
+    </header>
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <div class="layout">
+
+        <!-- SIDEBAR -->
+        <div class="menu" id="sidebarMenu">
+            
+            <!-- Sidebar Header -->
+            <div class="sidebar-header">
+                <div class="brand-wrapper">
+                    <div class="brand-badge">
+                        <i class="fa-solid fa-compass-drafting"></i>
+                    </div>
+                    <span class="brand-title">SafarEst</span>
+                </div>
+                <button class="collapse-btn" id="collapseBtn" aria-label="Collapse Menu">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+            </div>
+
+            <!-- Functional Search Input -->
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="sidebarSearch" class="search-input" placeholder="Search menu...">
+            </div>
+
+            <!-- Navigation Links -->
+            <div class="menu-nav">
+                <a id="homeMenu" href="{% url 'home' %}">
+                    <i class="fa-solid fa-house nav-icon"></i> Home
+                </a>
+
+                <!-- Estimation -->
+                <div class="menu-item">
+                    <a id="estimationMenu" href="javascript:void(0)" onclick="toggleSubmenu(event, 'estimationSubmenu', this)">
+                        <i class="fa-solid fa-calculator nav-icon"></i> Estimation
+                    </a>
+                    <div class="submenu-right" id="estimationSubmenu">
+                        <a href="{% url 'estimation_workspace' 'footing' %}" onclick="openTool(event,'estimation_footing')">Footing</a>
+                        <a href="{% url 'estimation_workspace' 'beam' %}" onclick="openTool(event,'estimation_beam')">Beam</a>
+                        <a href="{% url 'estimation_workspace' 'column' %}" onclick="openTool(event,'estimation_column')">Column</a>
+                        <a href="{% url 'estimation_workspace' 'slab' %}" onclick="openTool(event,'estimation_slab')">Slab</a>
+                        <a href="{% url 'estimation_workspace' 'retaining_wall' %}" onclick="openTool(event,'estimation_retaining_wall')">Retaining Wall</a>
+                        <a href="{% url 'estimation_workspace' 'sample' %}" onclick="openTool(event,'estimation_sample')">Sample</a>
+                    </div>
+                </div>
+
+                <!-- QA/QC -->
+                <div class="menu-item">
+                    <a id="qaqcMenu" href="javascript:void(0)" onclick="toggleSubmenu(event, 'qaqcSubmenu', this)">
+                        <i class="fa-solid fa-flask nav-icon"></i> QA/QC
+                    </a>
+                    <div class="submenu-right" id="qaqcSubmenu">
+                        <a href="{% url 'qaqc_moisture' %}" onclick="openTool(event,'qaqc_moisture')">Moisture</a>
+                        <a href="{% url 'qaqc_sieve' %}" onclick="openTool(event,'qaqc_sieve')">Sieve Analysis</a>
+                        <a href="{% url 'qaqc_cube' %}" onclick="openTool(event,'qaqc_cube')">CC Cube</a>
+                        <a href="{% url 'qaqc_silt' %}" onclick="openTool(event,'qaqc_silt')">Silt Content</a>
+                        <a href="{% url 'qaqc_bulkage' %}" onclick="openTool(event,'qaqc_bulkage')">Sand Bulkage</a>
+                    </div>
+                </div>
+
+                <!-- Survey -->
+                <div class="menu-item">
+                    <a id="surveyMenu" href="javascript:void(0)" onclick="toggleSubmenu(event, 'surveySubmenu', this)">
+                        <i class="fa-solid fa-map-location-dot nav-icon"></i> Survey
+                    </a>
+                    <div class="submenu-right" id="surveySubmenu">
+                        <a href="{% url 'sur_sympson' %}" onclick="openTool(event,'sur_sympson')">Simpson Rule</a>
+                        <a href="{% url 'sur_area' %}" onclick="openTool(event,'sur_area')">Area Calculation</a>
+                    </div>
+                </div>
+
+                <!-- Civil Aptitude -->
+                <div class="menu-item">
+                    <a id="aptMenu" href="javascript:void(0)" onclick="toggleSubmenu(event, 'aptSubmenu', this)">
+                        <i class="fa-solid fa-graduation-cap nav-icon"></i> Civil Aptitude
+                    </a>
+                    <div class="submenu-right" id="aptSubmenu">
+                        <a href="{% url 'apt_weight' %}" onclick="openTool(event,'apt_weight')">Unit Weight</a>
+                        <a href="{% url 'apt_area' %}" onclick="openTool(event,'apt_area')">Area Formula</a>
+                        <a href="{% url 'apt_volume' %}" onclick="openTool(event,'apt_volume')">Volume Formula</a>
+                    </div>
+                </div>
+
+                <!-- PDF Editor -->
+                <div class="menu-item">
+                    <a id="pdfMenu" href="javascript:void(0)" onclick="toggleSubmenu(event, 'pdfSubmenu', this)">
+                        <i class="fa-solid fa-file-pdf nav-icon"></i> PDF Editor
+                    </a>
+                    <div class="submenu-right" id="pdfSubmenu">
+                        <a href="{% url 'pdf_merge' %}" onclick="openTool(event,'pdf_merge')">Merge</a>
+                        <a href="{% url 'pdf_split' %}" onclick="openTool(event,'pdf_split')">Split</a>
+                        <a href="{% url 'pdf_rotate' %}" onclick="openTool(event,'pdf_rotate')">Rotate</a>
+                        <a href="{% url 'pdf_crop' %}" onclick="openTool(event,'pdf_crop')">Crop</a>
+                        <a href="{% url 'pdf_unlock' %}" onclick="openTool(event,'pdf_unlock')">Unlock</a>
+                        <a href="{% url 'pdf_lock' %}" onclick="openTool(event,'pdf_lock')">Lock</a>
+                        <a href="{% url 'pdf_shade' %}" onclick="openTool(event,'pdf_shade')">Remove Shade</a>
+                    </div>
+                </div>
+
+                <!-- CAD & Sheet -->
+                <a id="cadMenu" href="{% url 'cad_workspace' %}" onclick="openTool(event,'cad_workspace')">
+                    <i class="fa-solid fa-layer-group nav-icon"></i> CAD & Sheet
+                </a>
+
+                <!-- About -->
+                <a id="aboutMenu" href="{% url 'about' %}">
+                    <i class="fa-solid fa-circle-info nav-icon"></i> About
+                </a>
+
+                <!-- AI Assistant -->
+                <a id="aimenu" href="{% url 'assistant' %}" target="_blank">
+                    <i class="fa-solid fa-robot nav-icon"></i> AI Assistant
+                </a>
+            </div>
+
+            <!-- Footer: Theme Switcher -->
+            <div class="sidebar-footer">
+                <div class="dark-mode-card">
+                    <div class="dark-mode-title">
+                        <i class="fa-regular fa-moon" id="themeIcon"></i>
+                        <span id="themeLabel">Dark mode</span>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="themeToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Main Page Content -->
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+
+    </div>
+
+    {% block bottom_tabs %}{% endblock %}
+
+    <!-- Core Script Logic -->
     <script>
+        // --- 1. DARK / LIGHT MODE SWITCHER ---
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const themeLabel = document.getElementById('themeLabel');
+
+        function applyTheme(isDark) {
+            if (isDark) {
+                document.body.classList.remove('light-theme');
+                themeIcon.className = 'fa-regular fa-moon';
+                themeLabel.textContent = 'Dark mode';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-theme');
+                themeIcon.className = 'fa-regular fa-sun';
+                themeLabel.textContent = 'Light mode';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Initialize Theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            applyTheme(false);
+        } else {
+            themeToggle.checked = true;
+            applyTheme(true);
+        }
+
+        themeToggle.addEventListener('change', function() {
+            applyTheme(this.checked);
+        });
+
+        // --- 2. FLOATING / POPUP SUBMENU HANDLERS ---
         function hideAllSubmenus() {
-            document.querySelectorAll('.submenu-right').forEach(menu => {
-                menu.style.display = 'none';
+            document.querySelectorAll('.submenu-right').forEach(sub => {
+                sub.style.display = 'none';
+            });
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('open');
             });
         }
 
-        function clearActiveHighlights() {
-            document.querySelectorAll('.menu a').forEach(a => {
-                a.classList.remove('active');
-            });
+        function positionSubmenu(parentLink, submenu) {
+            if (window.innerWidth > 1024) {
+                const rect = parentLink.getBoundingClientRect();
+                submenu.style.top = rect.top + 'px';
+                submenu.style.left = (rect.right + 10) + 'px';
+            } else {
+                submenu.style.top = 'auto';
+                submenu.style.left = 'auto';
+            }
         }
 
-        function toggleMenu(event, submenuId, menuEl) {
+        function toggleSubmenu(event, submenuId, parentLink) {
+            event.preventDefault();
             event.stopPropagation();
             const submenu = document.getElementById(submenuId);
+            const parentItem = parentLink.closest('.menu-item');
             const isAlreadyOpen = submenu.style.display === 'block';
 
             hideAllSubmenus();
-            clearActiveHighlights();
 
             if (!isAlreadyOpen) {
+                positionSubmenu(parentLink, submenu);
                 submenu.style.display = 'block';
-                menuEl.classList.add('active');
+                parentItem.classList.add('open');
+                parentLink.classList.add('active');
             }
         }
 
-        window.onclick = function (event) {
-            if (!event.target.closest('.menu-item')) {
+        // Hover behavior for desktop flyouts
+        document.querySelectorAll('.menu-item').forEach(item => {
+            const parentLink = item.querySelector('a');
+            const submenu = item.querySelector('.submenu-right');
+
+            item.addEventListener('mouseenter', () => {
+                if (window.innerWidth > 1024 && submenu) {
+                    positionSubmenu(parentLink, submenu);
+                    submenu.style.display = 'block';
+                    item.classList.add('open');
+                }
+            });
+
+            item.addEventListener('mouseleave', () => {
+                if (window.innerWidth > 1024 && submenu) {
+                    submenu.style.display = 'none';
+                    item.classList.remove('open');
+                }
+            });
+        });
+
+        // Close submenus when clicking outside
+        window.addEventListener('click', function (e) {
+            if (!e.target.closest('.menu-item') && !e.target.closest('.submenu-right')) {
                 hideAllSubmenus();
-            }
-        };
-
-        document.addEventListener("DOMContentLoaded", function() {
-            const currentPath = window.location.pathname;
-            const homePath = "{% url 'home' %}";
-
-            if (currentPath === "/" || currentPath === homePath) {
-                document.getElementById("homeMenu")?.classList.add("active");
-                document.body.classList.add("home-active");
-            } else {
-                document.body.classList.remove('home-active');
-                
-                document.querySelectorAll('.menu a[href]').forEach(link => {
-                    const linkPath = new URL(link.href, window.location.origin).pathname;
-                    if (currentPath === linkPath && link.getAttribute('href') !== "javascript:void(0)") {
-                        link.classList.add('active');
-                        const parent = link.closest('.menu-item');
-                        if (parent) {
-                            parent.querySelector('a').classList.add('active');
-                        }
-                    }
-                });
             }
         });
 
-        const toolWindows = {};
+        // --- 3. SEARCH FILTERING FUNCTIONALITY ---
+        const searchInput = document.getElementById('sidebarSearch');
+        searchInput.addEventListener('input', function() {
+            const filter = this.value.toLowerCase().trim();
+            const menuItems = document.querySelectorAll('.menu-nav .menu-item');
+            const directLinks = document.querySelectorAll('.menu-nav > a');
 
+            directLinks.forEach(link => {
+                const text = link.textContent.toLowerCase();
+                if (text.includes(filter)) {
+                    link.classList.remove('hidden-search');
+                } else {
+                    link.classList.add('hidden-search');
+                }
+            });
+
+            menuItems.forEach(item => {
+                const parentLink = item.querySelector('> a');
+                const subLinks = item.querySelectorAll('.submenu-right a');
+                let parentMatch = parentLink.textContent.toLowerCase().includes(filter);
+                let subMatch = false;
+
+                subLinks.forEach(sub => {
+                    const subText = sub.textContent.toLowerCase();
+                    if (subText.includes(filter)) {
+                        subMatch = true;
+                        sub.style.display = 'block';
+                    } else if (filter !== '') {
+                        sub.style.display = 'none';
+                    } else {
+                        sub.style.display = 'block';
+                    }
+                });
+
+                if (parentMatch || subMatch) {
+                    item.classList.remove('hidden-search');
+                    if (filter !== '' && subMatch && window.innerWidth <= 1024) {
+                        item.querySelector('.submenu-right').style.display = 'block';
+                    }
+                } else {
+                    item.classList.add('hidden-search');
+                }
+            });
+        });
+
+        // --- 4. TOOL WINDOW OPENER & URL ACTIVE HIGHLIGHT ---
+        const toolWindows = {};
         function openTool(event, toolName) {
             event.preventDefault();
             const url = event.currentTarget.href;
@@ -96,88 +785,70 @@
             } else {
                 toolWindows[toolName] = window.open(url, toolName);
             }
-
             hideAllSubmenus();
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentPath = window.location.pathname;
+            const homePath = "{% url 'home' %}";
+
+            if (currentPath === "/" || currentPath === homePath) {
+                document.getElementById("homeMenu")?.classList.add("active");
+            } else {
+                document.querySelectorAll('.menu a[href]').forEach(link => {
+                    const linkPath = new URL(link.href, window.location.origin).pathname;
+                    if (currentPath === linkPath && link.getAttribute('href') !== "javascript:void(0)") {
+                        link.classList.add('active');
+                        const parent = link.closest('.menu-item');
+                        if (parent) {
+                            parent.querySelector('> a')?.classList.add('active');
+                        }
+                    }
+                });
+            }
+        });
+
+        // --- 5. MOBILE DRAWER TOGGLE CONTROL ---
+        (function () {
+            function isOpen() { return document.body.classList.contains('menu-open'); }
+
+            function setMenuOpen(open) {
+                document.body.classList.toggle('menu-open', open);
+                const btn = document.getElementById('menuToggle');
+                const icon = document.getElementById('menuToggleIcon');
+                if (btn) {
+                    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+                }
+                if (icon) icon.className = open ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+                if (!open) hideAllSubmenus();
+            }
+
+            document.addEventListener('click', function (e) {
+                if (e.target.closest('#menuToggle')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setMenuOpen(!isOpen());
+                    return;
+                }
+                if (e.target.closest('#menuOverlay') || e.target.closest('#collapseBtn')) {
+                    setMenuOpen(false);
+                    return;
+                }
+                const link = e.target.closest('.menu a');
+                if (link && isOpen() && link.getAttribute('href') !== 'javascript:void(0)') {
+                    setMenuOpen(false);
+                }
+            }, true);
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && isOpen()) setMenuOpen(false);
+            });
+
+            window.addEventListener('resize', function () {
+                if (window.innerWidth > 1024 && isOpen()) setMenuOpen(false);
+            });
+        })();
     </script>
     {% block extra_js %}{% endblock %}
-</head>
-
-<body class="{% block body_class %}{% endblock %}">
-
-    <div class="layout">
-
-        <div class="menu">
-            <a id="homeMenu" href="{% url 'home' %}">Home</a>
-
-            <!-- Estimation Submenus -->
-            <div class="menu-item">
-                <a id="estimationMenu" href="javascript:void(0)" onclick="toggleMenu(event,'estimationSubmenu',this)">Estimation</a>
-                <div class="submenu-right" id="estimationSubmenu">
-                    <a href="{% url 'estimation_workspace' 'footing' %}" onclick="openTool(event,'estimation_footing')">Footing</a>
-                    <a href="{% url 'estimation_workspace' 'beam' %}" onclick="openTool(event,'estimation_beam')">Beam</a>
-                    <a href="{% url 'estimation_workspace' 'column' %}" onclick="openTool(event,'estimation_column')">Column</a>
-                    <a href="{% url 'estimation_workspace' 'slab' %}" onclick="openTool(event,'estimation_slab')">Slab</a>
-                    <a href="{% url 'estimation_workspace' 'retaining_wall' %}" onclick="openTool(event,'estimation_retaining_wall')">Retaining Wall</a>
-                    <a href="{% url 'estimation_workspace' 'sample' %}" onclick="openTool(event,'estimation_sample')">Sample</a>
-                </div>
-            </div>
-
-            <div class="menu-item">
-                <a id="qaqcMenu" href="javascript:void(0)" onclick="toggleMenu(event,'qaqcSubmenu',this)">QA/QC</a>
-                <div class="submenu-right" id="qaqcSubmenu">
-                    <a href="{% url 'qaqc_moisture' %}" onclick="openTool(event,'qaqc_moisture')">Moisture</a>
-                    <a href="{% url 'qaqc_sieve' %}" onclick="openTool(event,'qaqc_sieve')">Sieve Analysis</a>
-                    <a href="{% url 'qaqc_cube' %}" onclick="openTool(event,'qaqc_cube')">CC Cube</a>
-                    <a href="{% url 'qaqc_silt' %}" onclick="openTool(event,'qaqc_silt')">Silt Content</a>
-                    <a href="{% url 'qaqc_bulkage' %}" onclick="openTool(event,'qaqc_bulkage')">Sand Bulkage</a>
-                </div>
-            </div>
-
-            <div class="menu-item">
-                <a id="surveyMenu" href="javascript:void(0)" onclick="toggleMenu(event,'surveySubmenu',this)">Survey</a>
-                <div class="submenu-right" id="surveySubmenu">
-                    <a href="{% url 'sur_sympson' %}" onclick="openTool(event,'sur_sympson')">Simpson Rule</a>
-                    <a href="{% url 'sur_area' %}" onclick="openTool(event,'sur_area')">Area Calculation</a>
-                </div>
-            </div>
-
-            <div class="menu-item">
-                <a id="aptMenu" href="javascript:void(0)" onclick="toggleMenu(event,'aptSubmenu',this)">Civil Aptitude</a>
-                <div class="submenu-right" id="aptSubmenu">
-                    <a href="{% url 'apt_weight' %}" onclick="openTool(event,'apt_weight')">Unit Weight</a>
-                    <a href="{% url 'apt_area' %}" onclick="openTool(event,'apt_area')">Area Formula</a>
-                    <a href="{% url 'apt_volume' %}" onclick="openTool(event,'apt_volume')">Volume Formula</a>
-                </div>
-            </div>
-
-            <div class="menu-item">
-                <a id="pdfMenu" href="javascript:void(0)" onclick="toggleMenu(event,'pdfSubmenu',this)">PDF Editor</a>
-                <div class="submenu-right" id="pdfSubmenu">
-                    <a href="{% url 'pdf_merge' %}" onclick="openTool(event,'pdf_merge')">Merge</a>
-                    <a href="{% url 'pdf_split' %}" onclick="openTool(event,'pdf_split')">Split</a>
-                    <a href="{% url 'pdf_rotate' %}" onclick="openTool(event,'pdf_rotate')">Rotate</a>
-                    <a href="{% url 'pdf_crop' %}" onclick="openTool(event,'pdf_crop')">Crop</a>
-                    <a href="{% url 'pdf_unlock' %}" onclick="openTool(event,'pdf_unlock')">Unlock</a>
-                    <a href="{% url 'pdf_lock' %}" onclick="openTool(event,'pdf_lock')">Lock</a>
-                    <a href="{% url 'pdf_shade' %}" onclick="openTool(event,'pdf_shade')">Remove Shade</a>
-                </div>
-            </div>
-
-            <!-- Single CAD & Sheet menu item (Lower position) -->
-            <a id="cadMenu" href="{% url 'cad_workspace' %}" onclick="openTool(event,'cad_workspace')">CAD & Sheet</a>
-
-            <a id="aboutMenu" href="{% url 'about' %}">About</a>
-            <a id="aimenu" href="{% url 'assistant' %}" target="_blank">AI Assistant</a>
-        </div>
-
-        <div class="content">
-            {% block content %}{% endblock %}
-        </div>
-
-    </div>
-
-    {% block bottom_tabs %}{% endblock %}
-
 </body>
 </html>

@@ -1,46 +1,228 @@
+/* =====================================================
+   BASE STYLES - modern navbar + modern sidebar
+   -----------------------------------------------------
+   Desktop / laptop  (>= 1025px): sidebar only
+   Tablet / mobile / watch (<= 1024px): modern navbar shown,
+   its button opens / closes the sidebar (drawer).
+   Sidebar behaviour (submenus, openTool, active links) is
+   unchanged - this file only changes look and layout.
+   ===================================================== */
+
+:root {
+    --menu-width: 256px;
+    --topbar-h: 60px;
+    --content-pad: 40px;
+    --menu-pad: 16px;
+    --menu-gap: 4px;
+    --menu-font: 15px;
+    --sub-font: 13.5px;
+    --icon-box: 32px;
+
+    --ink-0: #0a101d;
+    --ink-1: #0f1729;
+    --ink-2: #16213a;
+    --line: rgba(148, 163, 184, 0.16);
+    --text: #cbd5e1;
+    --text-strong: #f8fafc;
+    --muted: #94a3b8;
+    --hover: rgba(148, 163, 184, 0.12);
+    --accent-a: #38bdf8;   /* sky */
+    --accent-b: #6366f1;   /* indigo */
+    --accent-tint: rgba(99, 102, 241, 0.18);
+
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
 body {
     margin: 0;
     font-family: "Segoe UI", Arial, sans-serif;
-    background-color: #f4f6f8;
+    background-color: #f1f5f9;
 }
 
+img,
+video,
+iframe {
+    max-width: 100%;
+}
+
+/* ---------- Layout ---------- */
 .layout {
     display: flex;
     height: 100vh;
+    height: 100dvh;
 }
 
+/* =====================================================
+   SIDEBAR
+   ===================================================== */
 .menu {
-    width: 240px;
-    background: linear-gradient(180deg, #a77491, #6673ad);
-    padding: 20px;
+    width: var(--menu-width);
+    flex-shrink: 0;
+    background:
+        radial-gradient(90% 40% at 0% 0%, rgba(56, 189, 248, 0.14), transparent 70%),
+        radial-gradient(80% 40% at 100% 100%, rgba(99, 102, 241, 0.16), transparent 70%),
+        linear-gradient(180deg, var(--ink-0), var(--ink-1));
+    border-right: 1px solid var(--line);
+    padding: var(--menu-pad);
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: var(--menu-gap);
+    position: relative;
+    z-index: 20;
 }
 
+/* Brand header (CSS only, no HTML change) */
+.menu::before {
+    content: "SafarEdge";
+    display: block;
+    padding: 8px 10px 18px;
+    margin-bottom: 8px;
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    background: linear-gradient(90deg, #fff, var(--accent-a));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    border-bottom: 1px solid var(--line);
+}
+
+/* Menu links */
 .menu a {
-    background: linear-gradient(180deg, #7067f3, #5d7eb3);
-    color: white;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: transparent;
+    color: var(--text);
     text-decoration: none;
-    padding: 12px;
-    border-radius: 50px;
-    font-weight: 600;
+    padding: 8px 12px 8px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: var(--menu-font);
+    line-height: 1.2;
+    transition: background 0.18s ease, color 0.18s ease;
 }
 
 .menu a:hover {
-    background: #334155;
+    background: var(--hover);
+    color: var(--text-strong);
+}
+
+.menu a.active {
+    background: var(--accent-tint);
+    color: var(--text-strong);
+    font-weight: 600;
+}
+
+/* active indicator bar */
+.menu > a.active,
+.menu-item > a.active {
+    box-shadow: inset 3px 0 0 var(--accent-a);
+}
+
+.menu a:focus-visible {
+    outline: 2px solid var(--accent-a);
+    outline-offset: 2px;
+}
+
+/* Icon tiles (Font Awesome is already loaded in base.html) */
+.menu > a::before,
+.menu-item > a::before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 14px;
+    width: var(--icon-box);
+    height: var(--icon-box);
+    line-height: var(--icon-box);
+    text-align: center;
+    flex-shrink: 0;
+    border-radius: 9px;
+    background: rgba(148, 163, 184, 0.12);
+    color: var(--accent-a);
+    transition: background 0.18s ease, color 0.18s ease;
+}
+
+.menu a.active::before {
+    background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+    color: #fff;
+}
+
+#homeMenu::before       { content: "\f015"; }
+#estimationMenu::before { content: "\f1ec"; }
+#qaqcMenu::before       { content: "\f0c3"; }
+#surveyMenu::before     { content: "\f279"; }
+#aptMenu::before        { content: "\f19d"; }
+#pdfMenu::before        { content: "\f1c1"; }
+#cadMenu::before        { content: "\f1b2"; }
+#aboutMenu::before      { content: "\f05a"; }
+#aimenu::before         { content: "\f544"; }
+
+/* Dropdown arrow on parent items */
+.menu-item > a::after {
+    content: "\f054";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 10px;
+    margin-left: auto;
+    color: var(--muted);
+    transition: transform 0.2s ease;
+}
+
+.menu-item:has(> .submenu-right[style*="block"]) > a::after {
+    transform: rotate(90deg);
 }
 
 .menu-item {
     position: relative;
 }
 
+.menu-item > a {
+    display: flex;
+}
+
+/* ---------- Submenu (flyout panel on desktop) ---------- */
 .submenu-right {
     display: none;
     position: absolute;
     left: 100%;
     top: 0;
-    margin-left: 8px;
+    margin-left: 14px;
+    min-width: 200px;
+    padding: 6px;
+    background: rgba(15, 23, 41, 0.96);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: 0 20px 48px rgba(2, 6, 23, 0.45);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    white-space: nowrap;
+    z-index: 50;
+}
+
+/* hover bridge between menu and flyout */
+.submenu-right::before {
+    content: "";
+    position: absolute;
+    left: -16px;
+    top: 0;
+    width: 16px;
+    height: 100%;
 }
 
 .menu-item:hover .submenu-right {
@@ -48,15 +230,441 @@ body {
 }
 
 .submenu-right a {
-    display: block;
-    background: #475569;
-    padding: 6px 10px;
-    margin-bottom: 4px;
-    font-size: 12px;
+    padding: 9px 12px;
+    margin-bottom: 2px;
+    border-radius: 9px;
+    font-size: var(--sub-font);
+    font-weight: 500;
+    color: var(--text);
 }
 
+.submenu-right a:last-child {
+    margin-bottom: 0;
+}
+
+.submenu-right a.active {
+    background: var(--accent-tint);
+    color: var(--text-strong);
+}
+
+/* ---------- Content ---------- */
 .content {
     flex: 1;
-    padding: 40px;
+    min-width: 0;
+    padding: var(--content-pad);
     overflow-y: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ---------- Navbar + overlay: hidden on desktop ---------- */
+.topbar,
+.menu-overlay {
+    display: none;
+}
+
+/* =====================================================
+   LARGE SCREENS
+   ===================================================== */
+@media (min-width: 1600px) {
+    :root {
+        --menu-width: 290px;
+        --content-pad: 56px;
+        --menu-font: 16px;
+        --sub-font: 14.5px;
+        --icon-box: 34px;
+    }
+}
+
+@media (min-width: 2200px) {
+    :root {
+        --menu-width: 360px;
+        --content-pad: 72px;
+        --menu-pad: 24px;
+        --menu-gap: 8px;
+        --menu-font: 20px;
+        --sub-font: 18px;
+        --icon-box: 44px;
+    }
+    .menu::before { font-size: 30px; }
+    .menu > a::before,
+    .menu-item > a::before { font-size: 19px; }
+}
+
+@media (min-width: 3200px) {
+    :root {
+        --menu-width: 460px;
+        --content-pad: 96px;
+        --menu-pad: 32px;
+        --menu-gap: 12px;
+        --menu-font: 27px;
+        --sub-font: 24px;
+        --icon-box: 58px;
+    }
+    .menu::before { font-size: 40px; }
+    .menu > a::before,
+    .menu-item > a::before { font-size: 26px; }
+}
+
+/* Small laptops */
+@media (min-width: 1025px) and (max-width: 1280px) {
+    :root {
+        --menu-width: 226px;
+        --content-pad: 28px;
+    }
+}
+
+/* Short desktop windows */
+@media (min-width: 1025px) and (max-height: 720px) {
+    :root {
+        --menu-gap: 2px;
+        --icon-box: 28px;
+    }
+    .menu::before { padding-bottom: 10px; margin-bottom: 4px; font-size: 18px; }
+}
+
+/* =====================================================
+   TABLET + MOBILE + WATCH (1024px and below)
+   ===================================================== */
+@media (max-width: 1024px) {
+    :root {
+        --menu-width: min(320px, 86vw);
+        --content-pad: 24px;
+        --menu-gap: 4px;
+    }
+
+    body.menu-open {
+        overflow: hidden;
+    }
+
+    /* ----- Modern navbar (frosted glass) ----- */
+    .topbar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: calc(var(--topbar-h) + var(--safe-top));
+        padding: var(--safe-top) calc(14px + var(--safe-right)) 0 calc(14px + var(--safe-left));
+        background: rgba(10, 16, 29, 0.82);
+        -webkit-backdrop-filter: saturate(160%) blur(16px);
+        backdrop-filter: saturate(160%) blur(16px);
+        border-bottom: 1px solid var(--line);
+        color: var(--text-strong);
+        z-index: 1200;
+    }
+
+    /* thin accent line under the navbar */
+    .topbar::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -1px;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent-a), var(--accent-b), transparent 85%);
+        opacity: 0.9;
+    }
+
+    .menu-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        flex-shrink: 0;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: rgba(148, 163, 184, 0.12);
+        color: var(--text-strong);
+        font-size: 18px;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition: background 0.18s ease, transform 0.18s ease;
+    }
+
+    .menu-toggle:hover {
+        background: rgba(148, 163, 184, 0.24);
+    }
+
+    .menu-toggle:active {
+        transform: scale(0.94);
+    }
+
+    .menu-toggle:focus-visible {
+        outline: 2px solid var(--accent-a);
+        outline-offset: 2px;
+    }
+
+    body.menu-open .menu-toggle {
+        background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+        border-color: transparent;
+        color: #fff;
+    }
+
+    /* brand: logo tile + name */
+    .topbar-title {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+        font-size: 18px;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .topbar-logo {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+        color: #fff;
+        font-size: 15px;
+        box-shadow: 0 4px 14px rgba(99, 102, 241, 0.45);
+    }
+
+    .layout {
+        padding-top: calc(var(--topbar-h) + var(--safe-top));
+    }
+
+    /* ----- Sidebar becomes a slide-in drawer ----- */
+    .menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: var(--menu-width);
+        padding: calc(var(--topbar-h) + var(--safe-top) + 14px) 12px calc(24px + var(--safe-bottom));
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        transform: translateX(-105%);
+        transition: transform 0.28s ease, visibility 0.28s;
+        z-index: 1100;
+        box-shadow: 12px 0 40px rgba(2, 6, 23, 0.55);
+        visibility: hidden;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(148, 163, 184, 0.35) transparent;
+    }
+
+    body.menu-open .menu {
+        transform: translateX(0);
+        visibility: visible;
+    }
+
+    /* the navbar already shows the brand */
+    .menu::before {
+        display: none;
+    }
+
+    .menu a {
+        min-height: 48px;
+    }
+
+    /* Submenus become inline accordions (existing JS toggles display) */
+    .submenu-right {
+        position: static;
+        min-width: 0;
+        margin: 4px 0 6px 26px;
+        padding: 0 0 0 10px;
+        background: transparent;
+        border: 0;
+        border-left: 2px solid var(--line);
+        border-radius: 0;
+        box-shadow: none;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+        white-space: normal;
+    }
+
+    .submenu-right::before {
+        display: none;
+    }
+
+    .menu-item:hover .submenu-right {
+        display: none; /* tap (JS inline style) opens it instead */
+    }
+
+    .submenu-right a {
+        min-height: 42px;
+        padding: 8px 12px;
+        font-size: 14px;
+        margin-bottom: 2px;
+    }
+
+    .menu-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(2, 6, 23, 0.62);
+        -webkit-backdrop-filter: blur(3px);
+        backdrop-filter: blur(3px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.28s ease;
+        z-index: 1050;
+    }
+
+    body.menu-open .menu-overlay {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+/* =====================================================
+   MOBILE (600px and below)
+   ===================================================== */
+@media (max-width: 600px) {
+    :root {
+        --topbar-h: 54px;
+        --content-pad: 16px;
+    }
+
+    .topbar-title { font-size: 17px; }
+
+    .menu-toggle {
+        width: 40px;
+        height: 40px;
+    }
+
+    .topbar-logo {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+/* =====================================================
+   SMALL PHONES (360px and below)
+   ===================================================== */
+@media (max-width: 360px) {
+    :root {
+        --topbar-h: 50px;
+        --content-pad: 12px;
+        --icon-box: 30px;
+    }
+
+    .topbar { gap: 8px; }
+    .topbar-title { font-size: 15px; gap: 8px; }
+
+    .topbar-logo {
+        width: 28px;
+        height: 28px;
+        font-size: 13px;
+    }
+
+    .menu {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .menu a {
+        font-size: 14px;
+        gap: 10px;
+    }
+
+    .submenu-right { margin-left: 22px; }
+    .submenu-right a { font-size: 13px; }
+}
+
+/* =====================================================
+   SMARTWATCH (260px and below)
+   ===================================================== */
+@media (max-width: 260px) {
+    :root {
+        --topbar-h: 42px;
+        --content-pad: 8px;
+        --icon-box: 24px;
+        --menu-gap: 3px;
+    }
+
+    .topbar {
+        gap: 6px;
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .topbar-title { font-size: 13px; }
+    .topbar-logo { display: none; }
+
+    .menu-toggle {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+        border-radius: 9px;
+    }
+
+    .menu {
+        width: 100vw;
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .menu a {
+        min-height: 36px;
+        font-size: 12px;
+        padding: 5px 8px 5px 5px;
+        gap: 8px;
+        border-radius: 10px;
+    }
+
+    .menu > a::before,
+    .menu-item > a::before {
+        font-size: 11px;
+        border-radius: 7px;
+    }
+
+    .menu-item > a::after { font-size: 8px; }
+
+    .submenu-right { margin: 3px 0 4px 8px; padding-left: 6px; }
+
+    .submenu-right a {
+        min-height: 32px;
+        font-size: 11px;
+        padding: 5px 8px;
+    }
+}
+
+/* Short screens in landscape (phones / watches) */
+@media (max-width: 1024px) and (max-height: 480px) {
+    :root { --topbar-h: 46px; }
+    .menu a {
+        min-height: 40px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+}
+
+/* Touch devices: no sticky hover after tap */
+@media (hover: none) {
+    .menu a:hover {
+        background: transparent;
+        color: var(--text);
+    }
+
+    .menu a.active:hover {
+        background: var(--accent-tint);
+        color: var(--text-strong);
+    }
+
+    .menu a:active {
+        background: var(--hover);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .menu,
+    .menu a,
+    .menu-overlay,
+    .menu-toggle,
+    .menu-item > a::after {
+        transition: none;
+    }
 }
