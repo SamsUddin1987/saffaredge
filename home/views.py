@@ -10,11 +10,11 @@ from .utils.pdf_crop import handle_crop_request
 from .utils.pdf_unlock import handle_unlock_request
 from .utils.pdf_lock import handle_lock_request
 from .utils.pdf_shade import handle_shade_request, save_shade_sample
-
+from django.views.decorators.clickjacking import xframe_options_sameorigin
 # =========================
 # GENERAL PAGES
 # =========================
-
+ 
 def home(request):
     return render(request, "home.html")
 
@@ -27,6 +27,8 @@ def assistant(request):
 # =========================
 # UNIFIED ESTIMATION & CAD WORKSPACE
 # =========================
+@xframe_options_sameorigin
+
 
 def workspace_view(request, tool_type='cad_default'):
     title_map = {

@@ -1,0 +1,91 @@
+/* ==========================================================================
+   WEBCAD LAYOUT — 70% drawing area, 30% chrome
+   ----------------------------------------------------------------
+   The screen height is split: the drawing (or estimation sheet) takes 70%,
+   and the header, ribbon, layout tabs, status bar and command line share 30%.
+   Load this file LAST so it overrides the positions set in the earlier sheets.
+
+   --chrome-h is the top area (header + ribbon) plus the bottom bars.
+   On very short screens it cannot go below 240px, so the chrome is larger
+   than 30% there. That keeps the ribbon usable.
+   ========================================================================== */
+
+:root {
+    --chrome-h: max(30vh, 240px);
+    --bottom-h: calc(var(--command-height) + var(--status-height) + var(--layout-tabs-height));
+    --ribbon-height: calc(var(--chrome-h) - var(--header-height) - var(--bottom-h));
+}
+
+/* Ribbon: fills the top part of the 30% chrome area */
+#asaf-ribbon-root {
+    top: var(--header-height);
+    height: var(--ribbon-height);
+    overflow: hidden;
+}
+.asaf-rb-panels {
+    flex: 1;
+    min-height: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+.asaf-rb-panel {
+    height: 100%;
+    min-height: 0;
+    padding: 3px 6px;
+    align-items: stretch;
+}
+.asaf-rb-btn {
+    height: auto;
+    min-height: 40px;
+    padding: 3px 5px;
+}
+.asaf-rb-btn i { font-size: 14px; }
+.asaf-rb-caption { margin-top: 2px; font-size: 10px; }
+
+/* Drawing area: the 70% region under the chrome, above the bottom bars */
+#cad2d-canvas-container {
+    top: calc(var(--header-height) + var(--ribbon-height));
+    bottom: var(--bottom-h);
+}
+
+/* Estimation sheet: fills the same 70% region as the drawing */
+#asaf-est-panel {
+    top: calc(var(--header-height) + var(--ribbon-height));
+    bottom: var(--bottom-h);
+    left: 0;
+    right: 0;
+    width: auto;
+    border-left: none;
+}
+body.asaf-est-visible #cad2d-canvas-container { display: none; }
+body.asaf-est-visible #asaf-est-panel { display: flex; }
+
+/* Ghost variant of the ribbon pill button (Estimation Settings) */
+.asaf-rb-estimate--ghost {
+    background: var(--bg-secondary, #fff);
+    color: var(--accent-indigo, #4f46e5);
+    border: 1px solid var(--border-active, rgba(79, 70, 229, 0.35));
+    box-shadow: none;
+}
+.asaf-rb-estimate--ghost:hover {
+    background: var(--accent-soft, #eef2ff);
+    color: var(--accent-indigo, #4f46e5);
+    box-shadow: none;
+}
+
+@media (max-width: 900px) {
+    /* Phones: the estimation view still uses the same 70/30 split. */
+    body.asaf-est-visible #cad2d-canvas-container { display: none; }
+}
+
+/* Header: keep the menus clear of the file name and the right-side buttons */
+@media (max-width: 1400px) {
+    .asaf-current-file-name { display: none; }
+    .header-left > .menu-item > span { padding: 6px 8px; font-size: 12.5px; }
+}
+/* Auto-save message: move it above the bottom bars so it never sits under the ribbon buttons */
+#auto-save-indicator {
+    top: auto !important;
+    bottom: calc(var(--bottom-h) + 8px) !important;
+    right: 16px !important;
+}

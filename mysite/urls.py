@@ -8,6 +8,7 @@ urlpatterns = [
     # ADMIN
     # =========================
     path("admin/", admin.site.urls),
+    
 
     # =========================
     # HOME & GENERAL

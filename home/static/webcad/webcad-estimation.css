@@ -1,0 +1,345 @@
+/* ==========================================================================
+   WEBCAD ESTIMATION — PANEL STYLES
+   ----------------------------------------------------------------
+   Separate from the CAD stylesheets. It reads the same colour variables as the
+   CAD (--bg-secondary, --accent-indigo, --border-color, ...), so the estimate
+   follows the CAD light and dark theme automatically.
+
+   Note: the spreadsheet cells are drawn by Luckysheet on a canvas. Their colours
+   are set in webcad_estimation.js from the same variables. This file styles the
+   panel, the summary cards, the settings form and the sheet toolbar and tabs.
+   ========================================================================== */
+
+#asaf-est-panel {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+}
+
+/* ---------- Header ---------- */
+#asaf-est-panel .asaf-est-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    flex-shrink: 0;
+}
+#asaf-est-panel .asaf-est-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent-indigo-light, var(--accent-indigo));
+    white-space: nowrap;
+}
+#asaf-est-panel .asaf-est-title small {
+    margin-left: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+#asaf-est-panel .asaf-est-status {
+    flex: 1;
+    min-width: 0;
+    font-size: 11px;
+    color: var(--text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+#asaf-est-panel .asaf-est-status.error { color: var(--accent-amber, #b45309); }
+#asaf-est-panel .asaf-est-iconbtn {
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+#asaf-est-panel .asaf-est-iconbtn:hover { background: var(--accent-soft); color: var(--accent-indigo); }
+
+/* ---------- Settings (collapsible) ---------- */
+#asaf-est-panel .asaf-est-settings {
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+}
+#asaf-est-panel .asaf-est-settings > summary {
+    padding: 9px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    list-style: none;
+}
+#asaf-est-panel .asaf-est-settings > summary::-webkit-details-marker { display: none; }
+#asaf-est-panel .asaf-est-settings > summary::before {
+    content: '▸';
+    display: inline-block;
+    margin-right: 6px;
+    color: var(--accent-indigo);
+    transition: transform 0.15s ease;
+}
+#asaf-est-panel .asaf-est-settings[open] > summary::before { transform: rotate(90deg); }
+
+#asaf-est-panel .asaf-est-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px 12px;
+    padding: 0 14px 10px;
+}
+#asaf-est-panel .asaf-est-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+#asaf-est-panel .asaf-est-field > span {
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#asaf-est-panel .asaf-est-field input,
+#asaf-est-panel .asaf-est-field select {
+    width: 100%;
+    padding: 7px 9px;
+    font-size: 12px;
+    color: var(--text-primary);
+    background: var(--bg-input, var(--bg-canvas, #fff));
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+#asaf-est-panel .asaf-est-field input:focus,
+#asaf-est-panel .asaf-est-field select:focus {
+    outline: none;
+    border-color: var(--accent-indigo);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+#asaf-est-panel .asaf-est-actions {
+    display: flex;
+    gap: 8px;
+    padding: 0 14px 12px;
+}
+#asaf-est-panel .asaf-est-btn {
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    background: var(--accent-indigo);
+    border: 1px solid var(--accent-indigo);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+}
+#asaf-est-panel .asaf-est-btn:hover { background: var(--accent-indigo-dark, var(--accent-indigo)); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+#asaf-est-panel .asaf-est-btn--ghost {
+    color: var(--text-secondary);
+    background: var(--bg-tertiary);
+    border-color: var(--border-color);
+}
+#asaf-est-panel .asaf-est-btn--ghost:hover { color: var(--accent-indigo); background: var(--accent-soft); }
+
+/* ---------- Summary cards ---------- */
+#asaf-est-panel .asaf-est-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+    gap: 8px;
+    padding: 10px 14px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+}
+#asaf-est-panel .asaf-est-card {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    padding: 9px 11px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+}
+#asaf-est-panel .asaf-est-card span {
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+#asaf-est-panel .asaf-est-card b {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#asaf-est-panel .asaf-est-card--primary {
+    grid-column: span 2;
+    background: var(--accent-indigo);
+    border-color: var(--accent-indigo);
+}
+#asaf-est-panel .asaf-est-card--primary span { color: rgba(255, 255, 255, 0.85); }
+#asaf-est-panel .asaf-est-card--primary b { color: #fff; font-size: 16px; }
+
+/* ---------- Sheet area and Luckysheet chrome ---------- */
+#asaf-est-panel .asaf-est-sheet {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    background: var(--bg-secondary);
+}
+#asaf-est-panel .asaf-est-sheet .luckysheet-sheet-container,
+#asaf-est-panel .asaf-est-sheet .luckysheet-bottom,
+#asaf-est-panel .asaf-est-sheet .luckysheet-wa-calculate {
+    font-family: 'Inter', system-ui, sans-serif;
+}
+#asaf-est-panel .asaf-est-sheet .luckysheet-bottom {
+    background: var(--bg-tertiary) !important;
+    border-top: 1px solid var(--border-color);
+}
+#asaf-est-panel .asaf-est-sheet .luckysheet-wa-calculate {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+}
+#asaf-est-panel .asaf-est-sheet .luckysheet-toolbar {
+    background: var(--bg-secondary) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+/* Sheet tabs (Estimate, Walls, Rooms) */
+#asaf-est-panel .asaf-est-sheet .luckysheet-sheet-item {
+    border-radius: 8px 8px 0 0;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+#asaf-est-panel .asaf-est-sheet .luckysheet-sheet-item.luckysheet-sheet-item-active {
+    background: var(--accent-soft) !important;
+    color: var(--accent-indigo) !important;
+    font-weight: 600;
+}
+
+/* ---------- Loading and empty states ---------- */
+#asaf-est-panel .asaf-est-sheet:empty::after {
+    content: 'Preparing the estimate…';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1200px) {
+    #asaf-est-panel .asaf-est-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+    #asaf-est-panel .asaf-est-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #asaf-est-panel .asaf-est-status { display: none; }
+}
+
+@media (max-width: 600px) {
+    #asaf-est-panel .asaf-est-head { padding: 8px 10px; }
+    #asaf-est-panel .asaf-est-grid { grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 10px 8px; }
+    #asaf-est-panel .asaf-est-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 8px 10px; }
+    #asaf-est-panel .asaf-est-card b { font-size: 13px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #asaf-est-panel *, #asaf-est-panel *::before, #asaf-est-panel *::after {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* ---------- Estimation Settings window ---------- */
+.asaf-est-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(15, 23, 42, 0.45);
+}
+.asaf-est-modal.visible { display: flex; }
+.asaf-est-modal-card {
+    width: min(760px, 100%);
+    max-height: calc(100vh - 32px);
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+.asaf-est-modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-color);
+}
+.asaf-est-modal-head h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent-indigo-light, var(--accent-indigo));
+}
+.asaf-est-modal-note {
+    margin: 0;
+    padding: 10px 18px 0;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+.asaf-est-modal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 16px;
+    padding: 14px 18px;
+    overflow-y: auto;
+}
+.asaf-est-modal-grid .asaf-est-field { gap: 5px; }
+.asaf-est-modal-grid .asaf-est-field > span { font-size: 12px; color: var(--text-secondary); white-space: normal; }
+.asaf-est-modal-grid input,
+.asaf-est-modal-grid select {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 13px;
+    color: var(--text-primary);
+    background: var(--bg-input, var(--bg-canvas, #fff));
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+.asaf-est-modal-grid input:focus,
+.asaf-est-modal-grid select:focus {
+    outline: none;
+    border-color: var(--accent-indigo);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.asaf-est-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 18px;
+    border-top: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+}
+@media (max-width: 600px) {
+    .asaf-est-modal-grid { grid-template-columns: 1fr; }
+}
